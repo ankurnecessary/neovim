@@ -1,39 +1,161 @@
-# Neo Vim configuration
+# Neovim Configuration
 
-1. Find the Neovim configuration directory
+Personal Neovim configuration for development with TypeScript, JavaScript, React, and Markdown in WSL.
 
-   Run this directly in your WSL terminal:
+## Features
 
-   ```bash
-   nvim --headless +'lua print(vim.fn.stdpath("config"))' +qa
-   ```
+- TypeScript and React IntelliSense using LSP and `blink.cmp`
+- Language server management using Mason
+- Markdown rendering using `render-markdown.nvim`
+- Windows clipboard integration through WSL
+- Project-wide text search using ripgrep
+- Relative line numbers
 
-   Expected output:
-   /home/something/.config/nvim i.e. ~/.config/nvim
+## Prerequisites
 
-2. Copy the content of this repo at the path found in last step.
+Install the following tools before configuring Neovim:
 
-3. Run `nvim` in termnal and then `:Lazy sync` inside the nvim editor. This will Install plugins from your configuration.
+- Neovim (tested with `v0.12.0-dev`)
+- Git
+- Node.js and npm
+- A C compiler, such as GCC
+- ripgrep (`rg`)
+- Tree-sitter CLI
 
-4. Mason installs TypeScript LSP. May require a restart.
+Install Tree-sitter CLI:
 
-5. IntelliSense ready
+```bash
+npm install -g tree-sitter-cli
+```
 
-## One important detail: Your WSL clipboard configuration
+Verify:
 
-Your init.lua currently contains:
-vim.g.clipboard = {
-name = "WslClipboard",
--- uses clip.exe and powershell.exe
-}
+```bash
+tree-sitter --version
+```
 
-This works in WSL on Windows, but won't work unchanged on native Linux or macOS. If your second machine also uses WSL, you can keep it as-is.
+## Installation
 
-For cross-platform use, you can later make this configuration conditional on the operating environment.
+### 1. Find the Neovim configuration directory
 
-## Copying content of this repo
+Run in your WSL terminal:
 
-```bash 
+```bash
+nvim --headless +'lua print(vim.fn.stdpath("config"))' +qa
+```
+
+Expected output:
+
+```text
+/home/your-username/.config/nvim
+```
+
+### 2. Clone this repository
+
+If `~/.config/nvim` does not already exist:
+
+```bash
 git clone <your-repository-url> ~/.config/nvim
+```
+
+If the directory already exists, back up your existing configuration before cloning. Do not overwrite it without reviewing its contents.
+
+### 3. Install Neovim plugins
+
+Start Neovim:
+
+```bash
 nvim
 ```
+
+Run:
+
+```vim
+:Lazy sync
+```
+
+Wait for installation to finish, then restart Neovim.
+
+### 4. Verify TypeScript IntelliSense
+
+Open a `.ts` or `.tsx` file in a project with TypeScript installed.
+
+Run:
+
+```vim
+:LspInfo
+```
+
+Verify that `ts_ls` is attached.
+
+If the TypeScript language server is missing, run:
+
+```vim
+:MasonInstall typescript-language-server
+```
+
+Restart Neovim if necessary.
+
+### 5. Install Markdown parsers
+
+Inside Neovim:
+
+```vim
+:lua require("nvim-treesitter").install({ "markdown", "markdown_inline" }):wait(120000)
+```
+
+Verify both parsers:
+
+```vim
+:lua print(pcall(vim.treesitter.language.add, "markdown"))
+:lua print(pcall(vim.treesitter.language.add, "markdown_inline"))
+```
+
+Both commands should begin with `true true` when successful.
+
+### 6. Preview Markdown
+
+Open a Markdown file:
+
+```bash
+nvim README.md
+```
+
+Toggle rendering:
+
+```vim
+:RenderMarkdown toggle
+```
+
+This renders Markdown inside Neovim. It is not an exact GitHub browser preview.
+
+## IntelliSense Shortcuts
+
+| Shortcut | Action |
+|---|---|
+| `Tab` | Accept completion suggestion |
+| `Shift + Tab` | Select previous suggestion |
+| `K` | Show type information |
+| `gd` | Go to definition |
+| `grr` | Find references |
+| `grn` | Rename symbol |
+| `gra` | Show code actions |
+
+The Tab behaviour depends on the mappings configured in `lua/plugins/completion.lua`.
+
+## WSL Clipboard Configuration
+
+This configuration integrates Neovim with the Windows clipboard using:
+
+- `clip.exe`
+- `powershell.exe`
+
+It is designed for WSL on Windows and will require changes for native Linux or macOS.
+
+## Plugin Version Management
+
+The repository includes `lazy-lock.json`, which records plugin revisions.
+
+Run `:Lazy sync` to install the configured plugin versions, or `:Lazy update` when intentionally upgrading plugins.
+
+External tools and Mason-managed language servers are not pinned by `lazy-lock.json`.
