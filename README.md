@@ -1,10 +1,11 @@
 # Neovim Configuration
 
-Personal Neovim configuration for development with TypeScript, JavaScript, React, and Markdown in WSL.
+Personal Neovim configuration for development with TypeScript, JavaScript, React, CSS, SCSS, Less, and Markdown in WSL.
 
 ## Features
 
 - TypeScript and React IntelliSense using LSP and `blink.cmp`
+- CSS, SCSS, and Less IntelliSense using `cssls`
 - Language server management using Mason
 - Markdown rendering using `render-markdown.nvim`
 - Windows clipboard integration through WSL
@@ -96,7 +97,61 @@ If the TypeScript language server is missing, run:
 
 Restart Neovim if necessary.
 
-### 5. Install Markdown parsers
+### 5. Verify CSS, SCSS, and Less IntelliSense
+
+The `cssls` language server provides code completion, diagnostics, and hover documentation for CSS, SCSS, and Less.
+
+Open a `.css`, `.scss`, or `.less` file.
+
+Run:
+
+```vim
+:LspInfo
+```
+
+Verify that `cssls` is attached.
+
+If the language server is missing, install it:
+
+```vim
+:MasonInstall css-lsp
+```
+
+Restart Neovim and reopen the stylesheet.
+
+Verify the detected filetype:
+
+```vim
+:set filetype?
+```
+
+For an SCSS file, the expected output is:
+
+```text
+filetype=scss
+```
+
+Check attached language servers:
+
+```vim
+:lua print(vim.inspect(vim.lsp.get_clients({ bufnr = 0 })))
+```
+
+Look for `cssls`.
+
+Test autocomplete by typing:
+
+```scss
+.container {
+  display: fl
+}
+```
+
+You should receive suggestions such as `flex` and `flow-root`.
+
+**Note:** CSS Modules class-name autocomplete inside `.tsx` files is not provided by `cssls` alone. Additional tooling is required for that functionality.
+
+### 6. Install Markdown parsers
 
 Inside Neovim:
 
@@ -113,7 +168,7 @@ Verify both parsers:
 
 Both commands should begin with `true true` when successful.
 
-### 6. Preview Markdown
+### 7. Preview Markdown
 
 Open a Markdown file:
 
@@ -142,6 +197,27 @@ This renders Markdown inside Neovim. It is not an exact GitHub browser preview.
 | `gra` | Show code actions |
 
 The Tab behaviour depends on the mappings configured in `lua/plugins/completion.lua`.
+
+## Language Server Configuration
+
+Language servers are declared in `lua/plugins/lsp.lua`:
+
+```lua
+ensure_installed = {
+  "ts_ls",
+  "cssls",
+},
+automatic_enable = true,
+```
+
+| Language server | Supported languages | Mason package |
+|---|---|---|
+| `ts_ls` | TypeScript, JavaScript, TSX, JSX | `typescript-language-server` |
+| `cssls` | CSS, SCSS, Less | `css-lsp` |
+
+The `ensure_installed` configuration automatically requests installation of these language servers through `mason-lspconfig.nvim`.
+
+Installing a server manually through Mason does not update `lsp.lua`. Add new language servers to `ensure_installed` when you want them included in future installations.
 
 ## WSL Clipboard Configuration
 
