@@ -10,7 +10,7 @@ return {
       "neovim/nvim-lspconfig",
     },
     opts = {
-      ensure_installed = { "ts_ls" },
+      ensure_installed = { "ts_ls", "cssls", },
       automatic_enable = true,
     },
   },
