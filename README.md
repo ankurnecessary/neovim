@@ -10,6 +10,7 @@ Personal Neovim configuration for development with TypeScript, JavaScript, React
 - Markdown rendering using `render-markdown.nvim`
 - Windows clipboard integration through WSL
 - Project-wide text search using ripgrep
+- Diagnostic messages in a floating window with `Space` then `e`
 - Relative line numbers
 
 ## Prerequisites

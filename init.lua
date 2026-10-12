@@ -68,6 +68,13 @@ vim.opt.grepprg = "rg --vimgrep --smart-case --hidden"
 vim.opt.grepformat = "%f:%l:%c:%m"
 -- END: VS Code Ctrl+Shift+F equivalent:
 
+-- START: To show the error message with the help of <space> and then <e> press
+-- This will help when E is present in the gutter.
+vim.keymap.set("n", "<leader>e", function()
+  vim.diagnostic.open_float()
+end, { desc = "Show diagnostic message" })
+-- END: Error message
+
 -- Setup lazy.nvim
 require("lazy").setup({
   spec = {
