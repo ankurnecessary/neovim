@@ -35,6 +35,27 @@ Verify:
 tree-sitter --version
 ```
 
+## Configuration Structure
+
+```text
+~/.config/nvim/
+ÃÄÄ init.lua
+ÃÄÄ lazy-lock.json
+ÀÄÄ lua/
+    ÀÄÄ plugins/
+        ÃÄÄ completion.lua
+        ÃÄÄ lsp.lua
+        ÀÄÄ markdown.lua
+```
+
+- `init.lua` - Bootstrap, editor options, clipboard, searching, diagnostic shortcut, and plugin loading
+- `completion.lua` - Autocomplete configuration using `blink.cmp`
+- `lsp.lua` - Language server installation and configuration
+- `markdown.lua` - Tree-sitter Markdown parsers and in-editor rendering
+- `lazy-lock.json` - Locked plugin revisions
+
+The leader key is configured as `Space`, and the local leader key is `\`.
+
 ## Installation
 
 ### 1. Find the Neovim configuration directory
@@ -198,6 +219,59 @@ This renders Markdown inside Neovim. It is not an exact GitHub browser preview.
 
 The Tab behaviour depends on the mappings configured in `lua/plugins/completion.lua`.
 
+## Project-Wide Search
+
+This configuration uses ripgrep (`rg`) for searching across project files.
+
+Search for text from inside Neovim:
+
+```vim
+:grep SEARCH_STRING .
+```
+
+View and navigate the results:
+
+| Command | Action |
+|---|---|
+| `:copen` | Open search results in the quickfix window |
+| `:cnext` | Jump to the next result |
+| `:cprev` | Jump to the previous result |
+| `:cclose` | Close the quickfix window |
+
+Searches use smart-case matching and include hidden files, while respecting ripgrep's usual ignore rules.
+
+Use a project's `.rgignore` file for additional search exclusions.
+
+## Diagnostics
+
+Language servers can report errors and warnings directly in Neovim.
+
+To inspect a diagnostic, place your cursor on the affected line in normal mode and press `Space`, then `e`. This opens a floating window with the diagnostic message, including errors marked with `E` in the gutter. Press `Esc` to dismiss it.
+
+The shortcut is defined in `init.lua` as `<leader>e`, with `Space` configured as the leader key. You can also run the equivalent command:
+
+```vim
+:lua vim.diagnostic.open_float()
+```
+
+To view all diagnostics in the current buffer:
+
+```vim
+:lua vim.diagnostic.setloclist()
+```
+
+| Shortcut | Action |
+|---|---|
+| `Space` then `e` | Show diagnostic message in a floating window |
+| `]d` | Next diagnostic |
+| `[d` | Previous diagnostic |
+| `]D` | Next error |
+| `[D` | Previous error |
+
+The `E` and `W` indicators represent errors and warnings, respectively.
+
+If language-server diagnostics are missing, check the attached servers with `:LspInfo`.
+
 ## Language Server Configuration
 
 Language servers are declared in `lua/plugins/lsp.lua`:
@@ -232,6 +306,6 @@ It is designed for WSL on Windows and will require changes for native Linux or m
 
 The repository includes `lazy-lock.json`, which records plugin revisions.
 
-Run `:Lazy sync` to install the configured plugin versions, or `:Lazy update` when intentionally upgrading plugins.
+Plugin update checking is enabled automatically. Run :Lazy sync to synchronize installed plugins with the configuration and lockfile, or :Lazy update to intentionally upgrade plugins.
 
 External tools and Mason-managed language servers are not pinned by `lazy-lock.json`.
