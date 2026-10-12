@@ -10,6 +10,7 @@ Personal Neovim configuration for development with TypeScript, JavaScript, React
 - Markdown rendering using `render-markdown.nvim`
 - Windows clipboard integration through WSL
 - Project-wide text search using ripgrep
+- Fuzzy file search using Telescope with `Ctrl+P`
 - Diagnostic messages in a floating window with `Space` then `e`
 - Relative line numbers
 
@@ -47,12 +48,14 @@ tree-sitter --version
         ÃÄÄ completion.lua
         ÃÄÄ lsp.lua
         ÀÄÄ markdown.lua
+        ÀÄÄ telescope.lua
 ```
 
 - `init.lua` - Bootstrap, editor options, clipboard, searching, diagnostic shortcut, and plugin loading
 - `completion.lua` - Autocomplete configuration using `blink.cmp`
 - `lsp.lua` - Language server installation and configuration
 - `markdown.lua` - Tree-sitter Markdown parsers and in-editor rendering
+- `telescope.lua` - Fuzzy file picker, `Ctrl+P` mapping, and folder exclusions
 - `lazy-lock.json` - Locked plugin revisions
 
 The leader key is configured as `Space`, and the local leader key is `\`.
@@ -219,6 +222,46 @@ This renders Markdown inside Neovim. It is not an exact GitHub browser preview.
 | `gra` | Show code actions |
 
 The Tab behaviour depends on the mappings configured in `lua/plugins/completion.lua`.
+
+## Find Files (VS Code Ctrl+P)
+
+Telescope provides a fuzzy file picker, configured in `lua/plugins/telescope.lua`.
+
+Start Neovim from your project directory so the picker searches that directory:
+
+```bash
+cd /path/to/project
+nvim .
+```
+
+In normal mode, press `Ctrl+P` and type part of a filename.
+
+| Shortcut | Action |
+|---|---|
+| `Ctrl+P` in normal mode | Open the file picker |
+| `Ctrl+N` / `Ctrl+P` inside the picker | Select the next / previous result |
+| `Enter` | Open the selected file |
+| `Esc` twice | Close the picker from insert mode |
+
+The picker includes hidden files and excludes `.git` and `node_modules` directories at the project root and in nested directories. It also respects ripgrep's usual ignore rules.
+
+The exclusions are configured in the `find_files` call:
+
+```lua
+require("telescope.builtin").find_files({
+  hidden = true,
+  file_ignore_patterns = {
+    "^%.git/",
+    "/%.git/",
+    "^node_modules/",
+    "/node_modules/",
+  },
+})
+```
+
+These exclusions use Lua patterns, so `%` escapes the dot in `.git`.
+
+After adding the Telescope plugin file, restart Neovim and run `:Lazy sync` to install Telescope and its `plenary.nvim` dependency. Restart Neovim after changing the mapping or exclusions.
 
 ## Project-Wide Search
 
