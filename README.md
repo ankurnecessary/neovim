@@ -11,6 +11,8 @@ Personal Neovim configuration for development with TypeScript, JavaScript, React
 - Windows clipboard integration through WSL
 - Project-wide text search using ripgrep
 - Fuzzy file search using Telescope with `Ctrl+P`
+- Git change markers and inline blame using Gitsigns
+- Git diffs and file history using Diffview
 - Diagnostic messages in a floating window with `Space` then `e`
 - Relative line numbers
 
@@ -49,6 +51,7 @@ tree-sitter --version
         ÃÄÄ lsp.lua
         ÀÄÄ markdown.lua
         ÀÄÄ telescope.lua
+        ÀÄÄ git.lua
 ```
 
 - `init.lua` - Bootstrap, editor options, clipboard, searching, diagnostic shortcut, and plugin loading
@@ -56,6 +59,7 @@ tree-sitter --version
 - `lsp.lua` - Language server installation and configuration
 - `markdown.lua` - Tree-sitter Markdown parsers and in-editor rendering
 - `telescope.lua` - Fuzzy file picker, `Ctrl+P` mapping, and folder exclusions
+- `git.lua` - Gitsigns inline blame and change previews, plus Diffview diffs and file history
 - `lazy-lock.json` - Locked plugin revisions
 
 The leader key is configured as `Space`, and the local leader key is `\`.
@@ -285,6 +289,43 @@ View and navigate the results:
 Searches use smart-case matching and include hidden files, while respecting ripgrep's usual ignore rules.
 
 Use a project's `.rgignore` file for additional search exclusions.
+
+## Git Integration
+
+Git plugins are configured in `lua/plugins/git.lua`:
+
+- `gitsigns.nvim` shows added, changed, and deleted lines in the gutter, previews changed blocks (hunks), and displays Git blame information.
+- `diffview.nvim` provides side-by-side diffs and the current file's commit history. It uses `plenary.nvim` as a dependency.
+
+After adding the plugin configuration, restart Neovim and run:
+
+```vim
+:Lazy sync
+```
+
+Open a tracked file inside a Git repository. Inline blame is enabled by default and appears after the cursor stays on a line for 500 milliseconds.
+
+Use these shortcuts in normal mode. The leader key is `Space`; press each key in sequence.
+
+| Shortcut | Action |
+|---|---|
+| `Space g b` | Show detailed Git blame for the current line |
+| `Space g p` | Preview the changed block under the cursor |
+| `Space g t` | Toggle inline blame |
+| `Space g d` | Open Git diffs |
+| `Space g h` | Show the current file's commit history |
+
+The Gitsigns shortcuts (`Space g b`, `Space g p`, and `Space g t`) are available in buffers where Gitsigns has attached.
+
+You can also open and close Diffview with commands:
+
+```vim
+:DiffviewOpen
+:DiffviewFileHistory %
+:DiffviewClose
+```
+
+`%` selects the current file for the history view. Use `:DiffviewClose` to return from either the diff or history view.
 
 ## Diagnostics
 
