@@ -347,6 +347,56 @@ Searches use smart-case matching and include hidden files, while respecting ripg
 
 Use a project's `.rgignore` file for additional search exclusions.
 
+## Running Shell Commands and Terminals
+
+Run a shell command with `:!`:
+
+```vim
+:!pnpm install
+:!mkdir -p src/components
+:!git status
+```
+
+Press `Enter` after the output to return to editing when prompted. Save any relevant buffer changes with `:w` before running commands that read files from disk.
+
+For an interactive shell or a long-running process such as a development server, open a terminal:
+
+```vim
+:terminal
+```
+
+Press `i` if needed to enter terminal input mode, then run commands normally:
+
+```bash
+pnpm dev
+mkdir -p src/components
+```
+
+To open the terminal in a horizontal split:
+
+```vim
+:split | terminal
+```
+
+Commands start in Neovim's current working directory. Check it with `:pwd` or change it before launching a command or terminal:
+
+```vim
+:cd /path/to/project
+```
+
+An already-running terminal shell keeps its own working directory; use `cd` inside that shell to change it.
+
+### Terminal controls
+
+These are built-in controls, with no custom mappings required:
+
+| Keys / command | Context | Action |
+|---|---|---|
+| `Ctrl+\\`, then `Ctrl+N` | Terminal input | Return to normal mode to navigate buffers and windows |
+| `i` | Normal mode in the terminal buffer | Return to terminal input |
+| `Ctrl+C` | Terminal input | Interrupt the foreground command |
+| `exit` | At the shell prompt | Exit the terminal shell |
+
 ## Git Integration
 
 Git plugins are configured in `lua/plugins/git.lua`:
@@ -435,3 +485,5 @@ The repository includes `lazy-lock.json`, which records plugin revisions.
 Plugin update checking is enabled automatically. Run `:Lazy sync` to synchronize installed plugins with the configuration and lockfile, or `:Lazy update` to intentionally upgrade plugins.
 
 External tools and Mason-managed language servers are not pinned by `lazy-lock.json`.
+
+`.nvimlog` is a generated Neovim runtime log and is excluded by `.gitignore`. Keep it out of version control; share relevant excerpts separately when troubleshooting. Configuration files and `lazy-lock.json` are the useful files to commit.
