@@ -14,7 +14,9 @@ Personal Neovim configuration for development with TypeScript, JavaScript, React
 - Git change markers and inline blame using Gitsigns
 - Git diffs and file history using Diffview
 - Diagnostic messages in a floating window with `Space` then `e`
-- Relative line numbers
+- Asynchronous LSP formatting with `Space f`
+- Two-space indentation using spaces instead of tabs
+- Absolute and relative line numbers
 
 ## Prerequisites
 
@@ -43,18 +45,18 @@ tree-sitter --version
 
 ```text
 ~/.config/nvim/
-ÃÄÄ init.lua
-ÃÄÄ lazy-lock.json
-ÀÄÄ lua/
-    ÀÄÄ plugins/
-        ÃÄÄ completion.lua
-        ÃÄÄ lsp.lua
-        ÀÄÄ markdown.lua
-        ÀÄÄ telescope.lua
-        ÀÄÄ git.lua
+|-- init.lua
+|-- lazy-lock.json
+`-- lua/
+    `-- plugins/
+        |-- completion.lua
+        |-- git.lua
+        |-- lsp.lua
+        |-- markdown.lua
+        `-- telescope.lua
 ```
 
-- `init.lua` - Bootstrap, editor options, clipboard, searching, diagnostic shortcut, and plugin loading
+- `init.lua` - Bootstrap, editor options, clipboard, searching, diagnostic and formatting shortcuts, and plugin loading
 - `completion.lua` - Autocomplete configuration using `blink.cmp`
 - `lsp.lua` - Language server installation and configuration
 - `markdown.lua` - Tree-sitter Markdown parsers and in-editor rendering
@@ -213,19 +215,74 @@ Toggle rendering:
 
 This renders Markdown inside Neovim. It is not an exact GitHub browser preview.
 
-## IntelliSense Shortcuts
+## Shortcuts
+
+The leader key is `Space`; press leader sequences one key at a time in normal mode. The local leader is `\`, with no custom local-leader mappings currently configured.
+
+### Configured mappings
+
+| Shortcut | Mode / context | Action | Configuration |
+|---|---|---|---|
+| `Space e` | Normal | Show diagnostics for the current line in a floating window | `init.lua` |
+| `Space f` | Normal | Format the current file asynchronously using an attached LSP | `init.lua` |
+| `Ctrl+P` | Normal | Find files with Telescope | `lua/plugins/telescope.lua` |
+| `Space g b` | Normal, Gitsigns attached | Show detailed blame for the current line | `lua/plugins/git.lua` |
+| `Space g p` | Normal, Gitsigns attached | Preview the changed block under the cursor | `lua/plugins/git.lua` |
+| `Space g t` | Normal, Gitsigns attached | Toggle inline blame | `lua/plugins/git.lua` |
+| `Space g d` | Normal | Open Git diffs | `lua/plugins/git.lua` |
+| `Space g h` | Normal | Show the current file's commit history | `lua/plugins/git.lua` |
+| `Tab` | Insert, completion menu | Select and accept a completion suggestion; fall back to normal Tab behavior when unavailable | `lua/plugins/completion.lua` |
+| `Shift+Tab` | Insert, completion menu | Select the previous suggestion; fall back when unavailable | `lua/plugins/completion.lua` |
+
+### Completion preset shortcuts
+
+`blink.cmp` uses its `default` preset, with the Tab mappings overridden above. These shortcuts apply in insert mode:
 
 | Shortcut | Action |
 |---|---|
-| `Tab` | Accept completion suggestion |
-| `Shift + Tab` | Select previous suggestion |
-| `K` | Show type information |
-| `gd` | Go to definition |
-| `grr` | Find references |
-| `grn` | Rename symbol |
-| `gra` | Show code actions |
+| `Ctrl+Space` | Show completion; show or hide its documentation |
+| `Ctrl+Y` | Select and accept a completion suggestion |
+| `Ctrl+E` | Cancel completion |
+| `Ctrl+N` / `Down` | Select the next suggestion |
+| `Ctrl+P` / `Up` | Select the previous suggestion |
+| `Ctrl+B` / `Ctrl+F` | Scroll completion documentation up / down |
+| `Ctrl+K` | Show or hide signature help |
 
-The Tab behaviour depends on the mappings configured in `lua/plugins/completion.lua`.
+### File picker controls
+
+These are Telescope defaults inside the picker, rather than custom editor mappings:
+
+| Shortcut | Action |
+|---|---|
+| `Ctrl+N` / `Ctrl+P` | Select the next / previous result in insert mode |
+| `Enter` | Open the selected file |
+| `Esc`, then `Esc` | Leave insert mode, then close the picker |
+
+### Neovim LSP and diagnostic defaults
+
+These built-in mappings are separate from the custom mappings above. LSP actions require an attached server that supports the action.
+
+| Shortcut | Mode | Action |
+|---|---|---|
+| `K` | Normal, LSP attached | Show hover documentation |
+| `Ctrl+]` | Normal, LSP attached | Go to definition using the LSP tag function |
+| `grr` | Normal | Find references |
+| `grn` | Normal | Rename symbol |
+| `gra` | Normal / Visual | Show code actions |
+| `gri` | Normal | Go to implementation |
+| `grt` | Normal | Go to type definition |
+| `gO` | Normal | List document symbols |
+| `Ctrl+S` | Insert | Show signature help |
+| `]d` / `[d` | Normal | Jump to the next / previous diagnostic |
+| `]D` / `[D` | Normal | Jump to the last / first diagnostic in the buffer |
+
+`gd` is not mapped to LSP definition lookup in this configuration. Use `Ctrl+]` when the LSP tag function is available.
+
+## Indentation and Formatting
+
+`init.lua` sets `tabstop`, `shiftwidth`, and `softtabstop` to `2`, with `expandtab` enabled. New indentation uses spaces, with two spaces per level; existing tabs are not automatically converted. Filetype plugins or project settings may override these defaults.
+
+In normal mode, press `Space f` to format the whole file. This calls `vim.lsp.buf.format({ async = true })` and requires an attached language server with formatting support. No standalone formatter such as Prettier is configured here, so this shortcut does not guarantee formatting for every supported language.
 
 ## Find Files (VS Code Ctrl+P)
 
@@ -240,12 +297,7 @@ nvim .
 
 In normal mode, press `Ctrl+P` and type part of a filename.
 
-| Shortcut | Action |
-|---|---|
-| `Ctrl+P` in normal mode | Open the file picker |
-| `Ctrl+N` / `Ctrl+P` inside the picker | Select the next / previous result |
-| `Enter` | Open the selected file |
-| `Esc` twice | Close the picker from insert mode |
+See [Shortcuts](#shortcuts) for file picker navigation.
 
 The picker includes hidden files and excludes `.git` and `node_modules` directories at the project root and in nested directories. It also respects ripgrep's usual ignore rules.
 
@@ -305,17 +357,7 @@ After adding the plugin configuration, restart Neovim and run:
 
 Open a tracked file inside a Git repository. Inline blame is enabled by default and appears after the cursor stays on a line for 500 milliseconds.
 
-Use these shortcuts in normal mode. The leader key is `Space`; press each key in sequence.
-
-| Shortcut | Action |
-|---|---|
-| `Space g b` | Show detailed Git blame for the current line |
-| `Space g p` | Preview the changed block under the cursor |
-| `Space g t` | Toggle inline blame |
-| `Space g d` | Open Git diffs |
-| `Space g h` | Show the current file's commit history |
-
-The Gitsigns shortcuts (`Space g b`, `Space g p`, and `Space g t`) are available in buffers where Gitsigns has attached.
+See [Shortcuts](#shortcuts) for Git mappings. Gitsigns mappings are available in buffers where Gitsigns has attached.
 
 You can also open and close Diffview with commands:
 
@@ -345,13 +387,7 @@ To view all diagnostics in the current buffer:
 :lua vim.diagnostic.setloclist()
 ```
 
-| Shortcut | Action |
-|---|---|
-| `Space` then `e` | Show diagnostic message in a floating window |
-| `]d` | Next diagnostic |
-| `[d` | Previous diagnostic |
-| `]D` | Next error |
-| `[D` | Previous error |
+See [Shortcuts](#shortcuts) for diagnostic navigation.
 
 The `E` and `W` indicators represent errors and warnings, respectively.
 
@@ -391,6 +427,6 @@ It is designed for WSL on Windows and will require changes for native Linux or m
 
 The repository includes `lazy-lock.json`, which records plugin revisions.
 
-Plugin update checking is enabled automatically. Run :Lazy sync to synchronize installed plugins with the configuration and lockfile, or :Lazy update to intentionally upgrade plugins.
+Plugin update checking is enabled automatically. Run `:Lazy sync` to synchronize installed plugins with the configuration and lockfile, or `:Lazy update` to intentionally upgrade plugins.
 
 External tools and Mason-managed language servers are not pinned by `lazy-lock.json`.
