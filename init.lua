@@ -75,6 +75,13 @@ vim.keymap.set("n", "<leader>e", function()
 end, { desc = "Show diagnostic message" })
 -- END: Error message
 
+-- START: Format shortcut
+-- Enable shortcut <space> + <f> to format the whole document
+vim.keymap.set("n", "<leader>f", function()
+  vim.lsp.buf.format({ async = true })
+end, { desc = "Format current file" })
+-- END: format shortcut
+
 -- Setup lazy.nvim
 require("lazy").setup({
   spec = {
