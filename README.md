@@ -15,6 +15,7 @@ Personal Neovim configuration for development with TypeScript, JavaScript, React
 - Git diffs and file history using Diffview
 - Diagnostic messages in a floating window with `Space` then `e`
 - Asynchronous LSP formatting with `Space f`
+- Toggle line or selection comments with `Space /`
 - Two-space indentation using spaces instead of tabs
 - Absolute and relative line numbers
 
@@ -225,6 +226,8 @@ The leader key is `Space`; press leader sequences one key at a time in normal mo
 |---|---|---|---|
 | `Space e` | Normal | Show diagnostics for the current line in a floating window | `init.lua` |
 | `Space f` | Normal | Format the current file asynchronously using an attached LSP | `init.lua` |
+| `Space /` | Normal | Toggle a comment on the current line | `init.lua` |
+| `Space /` | Visual | Toggle comments on the selected lines | `init.lua` |
 | `Ctrl+P` | Normal | Find files with Telescope | `lua/plugins/telescope.lua` |
 | `Space g b` | Normal, Gitsigns attached | Show detailed blame for the current line | `lua/plugins/git.lua` |
 | `Space g p` | Normal, Gitsigns attached | Preview the changed block under the cursor | `lua/plugins/git.lua` |
@@ -279,6 +282,8 @@ These built-in mappings are separate from the custom mappings above. LSP actions
 `gd` is not mapped to LSP definition lookup in this configuration. Use `Ctrl+]` when the LSP tag function is available.
 
 ## Indentation and Formatting
+
+Press `Space /` in normal mode to comment or uncomment the current line. Select lines in Visual mode and press the same shortcut to toggle comments on the selection. This uses Neovim's built-in `gcc` / `gc` mappings and the filetype's `commentstring`; no additional plugin is required.
 
 `init.lua` sets `tabstop`, `shiftwidth`, and `softtabstop` to `2`, with `expandtab` enabled. New indentation uses spaces, with two spaces per level; existing tabs are not automatically converted. Filetype plugins or project settings may override these defaults.
 

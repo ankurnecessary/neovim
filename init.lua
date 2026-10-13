@@ -88,6 +88,10 @@ vim.keymap.set("n", "<leader>f", function()
 end, { desc = "Format current file" })
 -- END: format shortcut
 
+-- Toggle comments using Neovim's built-in commenting mappings.
+vim.keymap.set("n", "<leader>/", "gcc", { remap = true, desc = "Toggle line comment" })
+vim.keymap.set("x", "<leader>/", "gc", { remap = true, desc = "Toggle selected comments" })
+
 -- Setup lazy.nvim
 require("lazy").setup({
   spec = {
