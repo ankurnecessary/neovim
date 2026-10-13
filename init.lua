@@ -25,6 +25,12 @@ vim.g.maplocalleader = "\\"
 vim.opt.number = true
 vim.opt.relativenumber = true
 
+-- Indentation: 2 spaces per level
+vim.opt.tabstop = 2
+vim.opt.shiftwidth = 2
+vim.opt.softtabstop = 2
+vim.opt.expandtab = true
+
 -- To enable syntax highlighting
 vim.cmd("syntax enable")
 
