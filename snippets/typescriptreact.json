@@ -1,0 +1,15 @@
+{
+  "React arrow function component with default export": {
+    "prefix": "rafce",
+    "body": [
+      "const ${1:${TM_FILENAME_BASE}} = () => {",
+      "  return (",
+      "    <div>$0</div>",
+      "  );",
+      "};",
+      "",
+      "export default ${1};"
+    ],
+    "description": "Create a React arrow function component with a default export"
+  }
+}

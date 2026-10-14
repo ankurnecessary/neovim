@@ -5,6 +5,7 @@ Personal Neovim configuration for development with TypeScript, JavaScript, React
 ## Features
 
 - TypeScript and React IntelliSense using LSP and `blink.cmp`
+- React component snippet (`rafce`) for `.tsx` files
 - CSS, SCSS, and Less IntelliSense using `cssls`
 - Language server management using Mason
 - Markdown rendering using `render-markdown.nvim`
@@ -48,17 +49,20 @@ tree-sitter --version
 ~/.config/nvim/
 |-- init.lua
 |-- lazy-lock.json
-`-- lua/
-    `-- plugins/
-        |-- completion.lua
-        |-- git.lua
-        |-- lsp.lua
-        |-- markdown.lua
-        `-- telescope.lua
+|-- lua/
+|   `-- plugins/
+|       |-- completion.lua
+|       |-- git.lua
+|       |-- lsp.lua
+|       |-- markdown.lua
+|       `-- telescope.lua
+`-- snippets/
+    `-- typescriptreact.json
 ```
 
 - `init.lua` - Bootstrap, editor options, clipboard, searching, diagnostic and formatting shortcuts, and plugin loading
 - `completion.lua` - Autocomplete configuration using `blink.cmp`
+- `snippets/typescriptreact.json` - Custom React component snippet for TSX files
 - `lsp.lua` - Language server installation and configuration
 - `markdown.lua` - Tree-sitter Markdown parsers and in-editor rendering
 - `telescope.lua` - Fuzzy file picker, `Ctrl+P` mapping, and folder exclusions
@@ -236,6 +240,8 @@ The leader key is `Space`; press leader sequences one key at a time in normal mo
 | `Space g h` | Normal | Show the current file's commit history | `lua/plugins/git.lua` |
 | `Tab` | Insert, completion menu | Select and accept a completion suggestion; fall back to normal Tab behavior when unavailable | `lua/plugins/completion.lua` |
 | `Shift+Tab` | Insert, completion menu | Select the previous suggestion; fall back when unavailable | `lua/plugins/completion.lua` |
+| `Ctrl+L` | Insert, active snippet | Jump to the next snippet placeholder; fall back when unavailable | `lua/plugins/completion.lua` |
+| `Ctrl+H` | Insert, active snippet | Jump to the previous snippet placeholder; fall back when unavailable | `lua/plugins/completion.lua` |
 
 ### Completion preset shortcuts
 
@@ -280,6 +286,33 @@ These built-in mappings are separate from the custom mappings above. LSP actions
 | `]D` / `[D` | Normal | Jump to the last / first diagnostic in the buffer |
 
 `gd` is not mapped to LSP definition lookup in this configuration. Use `Ctrl+]` when the LSP tag function is available.
+
+## React Component Snippets
+
+The custom `rafce` snippet creates a React arrow function component with a default export in `.tsx` files. Blink loads it from `snippets/typescriptreact.json` using Neovim's built-in snippet engine; no additional snippet plugin is required.
+
+After adding or changing the snippet, restart Neovim. To use it:
+
+1. Open a file such as `MyComponent.tsx`.
+2. In insert mode, type `rafce`. If the completion menu does not appear, press `Ctrl+Space`.
+3. Select the React component snippet and press `Tab` to expand it.
+4. Edit the component name, then press `Ctrl+L` to move into the JSX body. Use `Ctrl+H` to return to the previous placeholder.
+
+The component name defaults to the filename without its extension and is mirrored in the default export. Use a valid PascalCase name such as `MyComponent`.
+
+For `MyComponent.tsx`, the initial expansion is:
+
+```tsx
+const MyComponent = () => {
+  return (
+    <div></div>
+  );
+};
+
+export default MyComponent;
+```
+
+If the snippet is missing, run `:set filetype?` and verify that the filetype is `typescriptreact`. The snippet is currently configured for TSX files only. Add more entries to `snippets/typescriptreact.json` to create additional triggers.
 
 ## Indentation and Formatting
 
