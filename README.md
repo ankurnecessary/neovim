@@ -9,6 +9,7 @@ Personal Neovim configuration for development with TypeScript, JavaScript, React
 - CSS, SCSS, and Less IntelliSense using `cssls`
 - Language server management using Mason
 - Markdown rendering using `render-markdown.nvim`
+- Browser-based Markdown preview using `markdown-preview.nvim`
 - Windows clipboard integration through WSL
 - Save images from the Windows clipboard as PNG files with `:Screenshot`
 - Project-wide text search using ripgrep
@@ -57,6 +58,7 @@ tree-sitter --version
 |       |-- completion.lua
 |       |-- git.lua
 |       |-- lsp.lua
+|       |-- markdown-preview.lua
 |       |-- markdown.lua
 |       `-- telescope.lua
 `-- snippets/
@@ -68,6 +70,7 @@ tree-sitter --version
 - `snippets/typescriptreact.json` - Custom React component snippet for TSX files
 - `lsp.lua` - Language server installation and configuration
 - `markdown.lua` - Tree-sitter Markdown parsers and in-editor rendering
+- `markdown-preview.lua` - Browser-based Markdown preview through Windows `explorer.exe`
 - `telescope.lua` - Fuzzy file picker, `Ctrl+P` mapping, and folder exclusions
 - `git.lua` - Gitsigns inline blame and change previews, plus Diffview diffs and file history
 - `lazy-lock.json` - Locked plugin revisions
@@ -223,6 +226,16 @@ Toggle rendering:
 
 This renders Markdown inside Neovim. It is not an exact GitHub browser preview.
 
+For a browser preview, run these commands from a Markdown buffer:
+
+```vim
+:MarkdownPreview
+:MarkdownPreviewStop
+:MarkdownPreviewToggle
+```
+
+The browser preview plugin builds with `npm install` in its `app` directory during plugin installation. It uses Windows `explorer.exe` to open the preview URL, so that executable must be available from WSL. `mkdp_auto_close = 0` keeps the preview open when switching to another buffer; use `:MarkdownPreviewStop` to stop it explicitly.
+
 ## Shortcuts
 
 The leader key is `Space`; press leader sequences one key at a time in normal mode. The local leader is `\`, with no custom local-leader mappings currently configured.
@@ -251,6 +264,10 @@ The leader key is `Space`; press leader sequences one key at a time in normal mo
 | Command | Action | Configuration |
 |---|---|---|
 | `:Screenshot` | Save the Windows clipboard image to a timestamped PNG in `./screenshots/` | `init.lua` |
+| `:CopyMatches` | Copy every occurrence of the current search pattern in the current buffer to the clipboard | `init.lua` |
+| `:MarkdownPreview` | Open the current Markdown file's browser preview | `lua/plugins/markdown-preview.lua` |
+| `:MarkdownPreviewStop` | Stop the browser preview | `lua/plugins/markdown-preview.lua` |
+| `:MarkdownPreviewToggle` | Toggle the browser preview | `lua/plugins/markdown-preview.lua` |
 
 See [Saving Screenshots](#saving-screenshots), [Copying Search Matches](#copying-search-matches), and [Preview Markdown](#7-preview-markdown) for usage. These commands have no custom keyboard shortcuts assigned. Browser preview commands are available in Markdown buffers.
 
