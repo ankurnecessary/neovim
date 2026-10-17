@@ -10,6 +10,7 @@ Personal Neovim configuration for development with TypeScript, JavaScript, React
 - Language server management using Mason
 - Markdown rendering using `render-markdown.nvim`
 - Windows clipboard integration through WSL
+- Save images from the Windows clipboard as PNG files with `:Screenshot`
 - Project-wide text search using ripgrep
 - Fuzzy file search using Telescope with `Ctrl+P`
 - Git change markers and inline blame using Gitsigns
@@ -30,6 +31,8 @@ Install the following tools before configuring Neovim:
 - A C compiler, such as GCC
 - ripgrep (`rg`)
 - Tree-sitter CLI
+
+The `:Screenshot` command requires WSL with `wslpath` and Windows `powershell.exe` available on PATH. It uses the Windows Forms and Drawing assemblies to read an image from the Windows clipboard.
 
 Install Tree-sitter CLI:
 
@@ -242,6 +245,14 @@ The leader key is `Space`; press leader sequences one key at a time in normal mo
 | `Shift+Tab` | Insert, completion menu | Select the previous suggestion; fall back when unavailable | `lua/plugins/completion.lua` |
 | `Ctrl+L` | Insert, active snippet | Jump to the next snippet placeholder; fall back when unavailable | `lua/plugins/completion.lua` |
 | `Ctrl+H` | Insert, active snippet | Jump to the previous snippet placeholder; fall back when unavailable | `lua/plugins/completion.lua` |
+
+### Custom commands
+
+| Command | Action | Configuration |
+|---|---|---|
+| `:Screenshot` | Save the Windows clipboard image to a timestamped PNG in `./screenshots/` | `init.lua` |
+
+See [Saving Screenshots](#saving-screenshots), [Copying Search Matches](#copying-search-matches), and [Preview Markdown](#7-preview-markdown) for usage. These commands have no custom keyboard shortcuts assigned. Browser preview commands are available in Markdown buffers.
 
 ### Completion preset shortcuts
 
@@ -510,6 +521,28 @@ This configuration integrates Neovim with the Windows clipboard using:
 - `powershell.exe`
 
 It is designed for WSL on Windows and will require changes for native Linux or macOS.
+
+## Saving Screenshots
+
+The `:Screenshot` command in `init.lua` saves an image already present in the Windows clipboard. It does not capture the screen itself.
+
+1. Take a screenshot with Windows Snipping Tool (for example, `Win+Shift+S`) or copy an image to the Windows clipboard.
+2. In Neovim, check the destination directory with `:pwd`. Use `:cd /path/to/project` if needed.
+3. Run:
+
+   ```vim
+   :Screenshot
+   ```
+
+The command creates a `screenshots/` directory under Neovim's current working directory and saves a PNG named `screenshot-YYYYMMDD-HHMMSS.png`, for example:
+
+```text
+screenshots/screenshot-20261018-143025.png
+```
+
+It converts the destination to a Windows path using `wslpath -w`, then runs `powershell.exe` to read and save the clipboard image. On success, a notification shows the saved file's full path. The command does not insert an image link into the current buffer.
+
+If saving fails, the notification reports a WSL path conversion error, a PowerShell error (including an empty or non-image clipboard), or that the PNG was not created. Ensure the clipboard contains an image and that `wslpath` and `powershell.exe` are available from WSL. Native Linux and macOS require a different implementation.
 
 ## Plugin Version Management
 

@@ -92,6 +92,74 @@ end, { desc = "Format current file" })
 vim.keymap.set("n", "<leader>/", "gcc", { remap = true, desc = "Toggle line comment" })
 vim.keymap.set("x", "<leader>/", "gc", { remap = true, desc = "Toggle selected comments" })
 
+-- START: Saving screenshots
+vim.api.nvim_create_user_command("Screenshot", function()
+  local dir = vim.fn.getcwd() .. "/screenshots"
+  vim.fn.mkdir(dir, "p")
+
+  local filename = os.date("screenshot-%Y%m%d-%H%M%S.png")
+  local path = dir .. "/" .. filename
+
+  local result = vim.fn.system({
+    "wslpath",
+    "-w",
+    path,
+  })
+
+  if vim.v.shell_error ~= 0 then
+    vim.notify("Failed to convert WSL path: " .. result, vim.log.levels.ERROR)
+    return
+  end
+
+  local windows_path = vim.trim(result)
+
+  -- Escape single quotes for PowerShell string literals.
+  local escaped_path = windows_path:gsub("'", "''")
+
+  local script = string.format([[
+$ErrorActionPreference = 'Stop'
+
+Add-Type -AssemblyName System.Windows.Forms
+Add-Type -AssemblyName System.Drawing
+
+$image = [System.Windows.Forms.Clipboard]::GetImage()
+
+if ($null -eq $image) {
+  throw "No image found in Windows clipboard"
+}
+
+$image.Save(
+  '%s',
+  [System.Drawing.Imaging.ImageFormat]::Png
+)
+]], escaped_path)
+
+  local output = vim.fn.system({
+    "powershell.exe",
+    "-NoProfile",
+    "-STA",
+    "-NonInteractive",
+    "-Command",
+    script,
+  })
+
+  if vim.v.shell_error ~= 0 then
+    vim.notify("Screenshot failed: " .. output, vim.log.levels.ERROR)
+    return
+  end
+
+  if vim.fn.filereadable(path) ~= 1 then
+    vim.notify(
+      "Screenshot failed: PNG was not created",
+      vim.log.levels.ERROR
+    )
+    return
+  end
+
+  vim.notify("Screenshot saved: " .. path)
+end, {})
+-- END: Saving screenshots
+
 -- Setup lazy.nvim
 require("lazy").setup({
   spec = {
