@@ -160,6 +160,32 @@ $image.Save(
 end, {})
 -- END: Saving screenshots
 
+-- START: Copy multiple occurrences of a string
+vim.api.nvim_create_user_command("CopyMatches", function()
+  local pattern = vim.fn.getreg("/")
+  local matches = {}
+
+  for _, line in ipairs(vim.api.nvim_buf_get_lines(0, 0, -1, false)) do
+    local start = 0
+
+    while start < #line do
+      local match = vim.fn.matchstrpos(line, pattern, start)
+      local value, from, to = match[1], match[2], match[3]
+
+      if from == -1 then
+        break
+      end
+
+      table.insert(matches, value)
+      start = math.max(to, from + 1)
+    end
+  end
+
+  vim.fn.setreg("+", table.concat(matches, "\n"))
+  print(#matches .. " matches copied")
+end, {})
+-- END: Copy multiple occurrences of a string
+
 -- Setup lazy.nvim
 require("lazy").setup({
   spec = {

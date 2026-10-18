@@ -13,6 +13,7 @@ Personal Neovim configuration for development with TypeScript, JavaScript, React
 - Windows clipboard integration through WSL
 - Save images from the Windows clipboard as PNG files with `:Screenshot`
 - Project-wide text search using ripgrep
+- Copy all occurrences of the current search pattern with `:CopyMatches`
 - Fuzzy file search using Telescope with `Ctrl+P`
 - Git change markers and inline blame using Gitsigns
 - Git diffs and file history using Diffview
@@ -407,6 +408,21 @@ View and navigate the results:
 Searches use smart-case matching and include hidden files, while respecting ripgrep's usual ignore rules.
 
 Use a project's `.rgignore` file for additional search exclusions.
+
+## Copying Search Matches
+
+`:CopyMatches` uses the current search pattern (the `/` register) to find matches throughout the current buffer and copy the matched text to the system clipboard, one match per line.
+
+1. Search for the text or Vim regular expression you want to copy, for example `/TODO`, then press `Enter`.
+2. Run:
+
+   ```vim
+   :CopyMatches
+   ```
+
+The command prints the number of matches copied. It includes multiple occurrences on the same line and preserves duplicates in buffer order. It copies only the matched text, rather than entire matching lines. For example, searching with `/\\vTODO|FIXME` copies each occurrence of `TODO` or `FIXME`.
+
+Matching is performed separately on each line, so patterns spanning multiple lines are not supported. If nothing matches, the clipboard is replaced with an empty string. In this WSL configuration, clipboard copying uses `clip.exe`; ensure Windows clipboard integration is available.
 
 ## Running Shell Commands and Terminals
 
