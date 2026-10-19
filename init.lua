@@ -84,7 +84,7 @@ end, { desc = "Show diagnostic message" })
 -- START: Format shortcut
 -- Enable shortcut <space> + <f> to format the whole document
 vim.keymap.set("n", "<leader>f", function()
-  vim.lsp.buf.format({ async = true })
+  require("conform").format({ async = true, lsp_format = "fallback" })
 end, { desc = "Format current file" })
 -- END: format shortcut
 

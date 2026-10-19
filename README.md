@@ -18,7 +18,7 @@ Personal Neovim configuration for development with TypeScript, JavaScript, React
 - Git change markers and inline blame using Gitsigns
 - Git diffs and file history using Diffview
 - Diagnostic messages in a floating window with `Space` then `e`
-- Asynchronous LSP formatting with `Space f`
+- Asynchronous Prettier formatting with `Space f`, with LSP fallback
 - Toggle line or selection comments with `Space /`
 - Two-space indentation using spaces instead of tabs
 - Absolute and relative line numbers
@@ -57,6 +57,7 @@ tree-sitter --version
 |-- lua/
 |   `-- plugins/
 |       |-- completion.lua
+|       |-- formatting.lua
 |       |-- git.lua
 |       |-- lsp.lua
 |       |-- markdown-preview.lua
@@ -68,6 +69,7 @@ tree-sitter --version
 
 - `init.lua` - Bootstrap, editor options, clipboard, searching, diagnostic and formatting shortcuts, and plugin loading
 - `completion.lua` - Autocomplete configuration using `blink.cmp`
+- `formatting.lua` - Prettier filetype configuration using `conform.nvim`
 - `snippets/typescriptreact.json` - Custom React component snippet for TSX files
 - `lsp.lua` - Language server installation and configuration
 - `markdown.lua` - Tree-sitter Markdown parsers and in-editor rendering
@@ -246,7 +248,7 @@ The leader key is `Space`; press leader sequences one key at a time in normal mo
 | Shortcut | Mode / context | Action | Configuration |
 |---|---|---|---|
 | `Space e` | Normal | Show diagnostics for the current line in a floating window | `init.lua` |
-| `Space f` | Normal | Format the current file asynchronously using an attached LSP | `init.lua` |
+| `Space f` | Normal | Format asynchronously with Prettier, falling back to an attached LSP when no formatter is available | `init.lua`, `lua/plugins/formatting.lua` |
 | `Space /` | Normal | Toggle a comment on the current line | `init.lua` |
 | `Space /` | Visual | Toggle comments on the selected lines | `init.lua` |
 | `Ctrl+P` | Normal | Find files with Telescope | `lua/plugins/telescope.lua` |
@@ -349,7 +351,22 @@ Press `Space /` in normal mode to comment or uncomment the current line. Select 
 
 `init.lua` sets `tabstop`, `shiftwidth`, and `softtabstop` to `2`, with `expandtab` enabled. New indentation uses spaces, with two spaces per level; existing tabs are not automatically converted. Filetype plugins or project settings may override these defaults.
 
-In normal mode, press `Space f` to format the whole file. This calls `vim.lsp.buf.format({ async = true })` and requires an attached language server with formatting support. No standalone formatter such as Prettier is configured here, so this shortcut does not guarantee formatting for every supported language.
+In normal mode, press `Space f` to format the whole file asynchronously using `conform.nvim`. Prettier is configured for JavaScript, JSX, TypeScript, TSX, CSS, SCSS, Less, HTML, JSON, JSONC, YAML, Markdown, and MDX. If no external formatter is available, Conform falls back to an attached LSP with formatting support. Formatter errors can be inspected with `:ConformInfo`.
+
+Restart Neovim and run `:Lazy sync` after adding the plugin. Prettier must also be installed in your project (for example, `pnpm add -D prettier` in the app directory, or `pnpm add -Dw prettier` at a pnpm workspace root). Conform searches for a local `node_modules/.bin/prettier` upward from the file being formatted, then falls back to Prettier on PATH.
+
+Prettier discovers configuration relative to the file being formatted. You can keep `.prettierrc.json` in `apps/admin`: files under that app use it even when Neovim starts at the monorepo root. Files outside the app use their own applicable configuration or Prettier defaults. A root config is optional for shared workspace defaults.
+
+For single-quoted strings and imports while keeping double-quoted JSX attributes, use this in the app's `.prettierrc.json`:
+
+```json
+{
+  "singleQuote": true,
+  "jsxSingleQuote": false
+}
+```
+
+No config path or quote style is hardcoded in Neovim. Prettier may choose double quotes to avoid escaping apostrophes; JSON requires double quotes. Formatting runs only when requested with `Space f`.
 
 ## Find Files (VS Code Ctrl+P)
 
