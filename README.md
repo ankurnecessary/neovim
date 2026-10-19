@@ -383,13 +383,19 @@ In normal mode, press `Ctrl+P` and type part of a filename.
 
 See [Shortcuts](#shortcuts) for file picker navigation.
 
-The picker includes hidden files and excludes `.git` and `node_modules` directories at the project root and in nested directories. It also respects ripgrep's usual ignore rules.
+The picker includes hidden and ignored files, including `.env` files excluded by `.gitignore`. It excludes `.git` and `node_modules` directories at the project root and in nested directories. This affects file discovery only; Git's ignore rules remain unchanged. Project-wide text search still respects ignore rules.
 
 The exclusions are configured in the `find_files` call:
 
 ```lua
 require("telescope.builtin").find_files({
   hidden = true,
+  no_ignore = true,
+  find_command = {
+    "rg", "--files", "--hidden", "--no-ignore",
+    "--glob", "!**/.git/**",
+    "--glob", "!**/node_modules/**",
+  },
   file_ignore_patterns = {
     "^%.git/",
     "/%.git/",
