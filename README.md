@@ -4,6 +4,7 @@ Personal Neovim configuration for development with TypeScript, JavaScript, React
 
 ## Features
 
+- Automatic bracket and quote pairing, plus closing HTML and JSX/TSX tags
 - TypeScript and React IntelliSense using LSP and `blink.cmp`
 - React component snippet (`rafce`) for `.tsx` files
 - CSS, SCSS, and Less IntelliSense using `cssls`
@@ -56,6 +57,7 @@ tree-sitter --version
 |-- lazy-lock.json
 |-- lua/
 |   `-- plugins/
+|       |-- autopairs.lua
 |       |-- completion.lua
 |       |-- formatting.lua
 |       |-- git.lua
@@ -69,6 +71,7 @@ tree-sitter --version
 
 - `init.lua` - Bootstrap, editor options, clipboard, searching, diagnostic and formatting shortcuts, and plugin loading
 - `completion.lua` - Autocomplete configuration using `blink.cmp`
+- `autopairs.lua` - Automatic bracket/quote pairing and HTML/JSX/TSX closing tags
 - `formatting.lua` - Prettier filetype configuration using `conform.nvim`
 - `snippets/typescriptreact.json` - Custom React component snippet for TSX files
 - `lsp.lua` - Language server installation and configuration
@@ -317,6 +320,20 @@ These built-in mappings are separate from the custom mappings above. LSP actions
 | `]D` / `[D` | Normal | Jump to the last / first diagnostic in the buffer |
 
 `gd` is not mapped to LSP definition lookup in this configuration. Use `Ctrl+]` when the LSP tag function is available.
+
+## Automatic Brackets and Closing Tags
+
+`nvim-autopairs` inserts matching closing brackets and quotes as you type in insert mode. For example, typing `(`, `[`, or `{` inserts `()`, `[]`, or `{}`, leaving the cursor between the pair. Typing the matching closing bracket moves past the existing closer; Backspace between an empty pair removes both characters.
+
+`nvim-ts-autotag` closes HTML and JSX/TSX tags when you type the opening tag's `>`. For example, typing `<div>` adds `</div>` and leaves the cursor between the tags. Automatic tag renaming is disabled. No new shortcut is needed.
+
+Restart Neovim and run `:Lazy sync` to install the plugins. The Tree-sitter setup requests `html`, `javascript`, `typescript`, and `tsx` parsers in addition to the Markdown parsers. Tag closing requires the appropriate parser to finish installing. To install or retry them explicitly:
+
+```vim
+:lua require("nvim-treesitter").install({ "html", "javascript", "typescript", "tsx" }):wait(120000)
+```
+
+Reopen the file after installation. If tags do not close, check `:set filetype?`: `.html`, `.jsx`, and `.tsx` files should use `html`, `javascriptreact`, and `typescriptreact`, respectively. Use `:checkhealth nvim-treesitter` to investigate parser installation problems.
 
 ## React Component Snippets
 

@@ -5,6 +5,10 @@ return {
     build = ":TSUpdate",
     config = function()
       require("nvim-treesitter").install({
+        "html",
+        "javascript",
+        "typescript",
+        "tsx",
         "markdown",
         "markdown_inline",
       })
