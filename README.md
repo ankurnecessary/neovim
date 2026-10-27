@@ -32,9 +32,19 @@ Install the following tools before configuring Neovim:
 - Neovim (tested with `v0.12.0-dev`)
 - Git
 - Node.js and npm
+- Prettier (required for `Space f` formatting of supported files, including Markdown; install locally in each project or globally for use outside projects)
 - A C compiler, such as GCC
 - ripgrep (`rg`)
 - Tree-sitter CLI
+
+Install Prettier globally so formatting also works outside projects with a local installation:
+
+```bash
+npm install --global prettier
+prettier --version
+```
+
+Project-local Prettier takes precedence. See [Indentation and Formatting](#indentation-and-formatting) for project installation and configuration.
 
 The `:Screenshot` command requires WSL with `wslpath` and Windows `powershell.exe` available on PATH. It uses the Windows Forms and Drawing assemblies to read an image from the Windows clipboard.
 
@@ -402,6 +412,18 @@ For single-quoted strings and imports while keeping double-quoted JSX attributes
 ```
 
 No config path or quote style is hardcoded in Neovim. Prettier may choose double quotes to avoid escaping apostrophes; JSON requires double quotes. Formatting runs only when requested with `Space f`.
+
+### Formatting Markdown
+
+Open a `.md` or `.mdx` file and press `Space f` in normal mode, then save with `:w`. Markdown and MDX use Prettier through Conform, separately from Markdown rendering and browser preview.
+
+For Markdown files outside a project with a local Prettier installation, install Prettier on PATH:
+
+```bash
+npm install --global prettier
+```
+
+Project-local Prettier takes precedence over the global installation. If formatting does not run, check `:ConformInfo` and verify `:set filetype?` reports `markdown` or `markdown.mdx`. Restart Neovim from a terminal where `prettier --version` works if the executable is not detected.
 
 ## Find Files (VS Code Ctrl+P)
 
