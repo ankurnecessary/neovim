@@ -31,6 +31,12 @@ vim.opt.shiftwidth = 2
 vim.opt.softtabstop = 2
 vim.opt.expandtab = true
 
+-- Fold indented blocks; keep them expanded when opening a file.
+vim.opt.foldmethod = "indent"
+vim.opt.foldlevel = 99
+vim.opt.foldlevelstart = 99
+vim.opt.foldenable = true
+
 -- To enable syntax highlighting
 vim.cmd("syntax enable")
 

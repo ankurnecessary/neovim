@@ -23,6 +23,7 @@ Personal Neovim configuration for development with TypeScript, JavaScript, React
 - Toggle line or selection comments with `Space /`
 - Two-space indentation using spaces instead of tabs
 - Absolute and relative line numbers
+- Indentation-based code folding, with folds expanded when opening files
 
 ## Prerequisites
 
@@ -321,6 +322,17 @@ These built-in mappings are separate from the custom mappings above. LSP actions
 
 `gd` is not mapped to LSP definition lookup in this configuration. Use `Ctrl+]` when the LSP tag function is available.
 
+### Folding shortcuts
+
+These built-in shortcuts work in normal mode:
+
+| Shortcut | Action |
+|---|---|
+| `za` | Toggle the fold under the cursor |
+| `zc` / `zo` | Close / open the fold under the cursor |
+| `zM` / `zR` | Close / open all folds |
+| `zj` / `zk` | Move to the next / previous fold |
+
 ## Automatic Brackets and Closing Tags
 
 `nvim-autopairs` inserts matching closing brackets and quotes as you type in insert mode. For example, typing `(`, `[`, or `{` inserts `()`, `[]`, or `{}`, leaving the cursor between the pair. Typing the matching closing bracket moves past the existing closer; Backspace between an empty pair removes both characters.
@@ -361,6 +373,12 @@ export default MyComponent;
 ```
 
 If the snippet is missing, run `:set filetype?` and verify that the filetype is `typescriptreact`. The snippet is currently configured for TSX files only. Add more entries to `snippets/typescriptreact.json` to create additional triggers.
+
+## Code Folding
+
+`init.lua` enables indentation-based folding (`foldmethod = "indent"`). Files open with folds expanded (`foldlevel` and `foldlevelstart` are `99`). Place the cursor inside an indented block and press `za` to collapse or expand it. Use `zM` to collapse all folds and `zR` to expand them.
+
+Folds follow indentation, so flat or unindented code will not produce useful folds. No additional plugin or Tree-sitter parser is required.
 
 ## Indentation and Formatting
 
