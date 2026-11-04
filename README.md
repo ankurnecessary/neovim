@@ -259,8 +259,11 @@ The leader key is `Space`; press leader sequences one key at a time in normal mo
 
 ### Configured mappings
 
+In normal mode, place the cursor on a symbol and press `gd` to go to its definition using the attached language server. Press `Ctrl+O` to return.
+
 | Shortcut | Mode / context | Action | Configuration |
 |---|---|---|---|
+| `gd` | Normal, LSP attached | Go to definition (`Ctrl+O` to return) | `init.lua` |
 | `Space e` | Normal | Show diagnostics for the current line in a floating window | `init.lua` |
 | `Space f` | Normal | Format asynchronously with Prettier, falling back to an attached LSP when no formatter is available | `init.lua`, `lua/plugins/formatting.lua` |
 | `Space /` | Normal | Toggle a comment on the current line | `init.lua` |
@@ -330,7 +333,7 @@ These built-in mappings are separate from the custom mappings above. LSP actions
 | `]d` / `[d` | Normal | Jump to the next / previous diagnostic |
 | `]D` / `[D` | Normal | Jump to the last / first diagnostic in the buffer |
 
-`gd` is not mapped to LSP definition lookup in this configuration. Use `Ctrl+]` when the LSP tag function is available.
+`gd` is a custom LSP go-to-definition mapping. `Ctrl+]` also works when the LSP tag function is available.
 
 ### Folding shortcuts
 

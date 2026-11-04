@@ -88,6 +88,8 @@ end, { desc = "Show diagnostic message" })
 -- END: Error message
 
 -- START: Format shortcut
+vim.keymap.set("n", "gd", vim.lsp.buf.definition, { desc = "Go to definition" })
+
 -- Enable shortcut <space> + <f> to format the whole document
 vim.keymap.set("n", "<leader>f", function()
   require("conform").format({ async = true, lsp_format = "fallback" })
