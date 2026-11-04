@@ -146,7 +146,7 @@ Run:
 :LspInfo
 ```
 
-Verify that `ts_ls` is attached.
+Verify that `tsc` is attached for TypeScript 7 or newer, or `ts_ls` for TypeScript 6 and older.
 
 If the TypeScript language server is missing, run:
 
@@ -614,15 +614,22 @@ ensure_installed = {
   "ts_ls",
   "cssls",
 },
-automatic_enable = true,
+automatic_enable = { exclude = { "ts_ls", "tsc", "tsgo" } },
 ```
 
 | Language server | Supported languages | Mason package |
 |---|---|---|
-| `ts_ls` | TypeScript, JavaScript, TSX, JSX | `typescript-language-server` |
+| `ts_ls` | TypeScript 6 and older; JavaScript, TSX, JSX | `typescript-language-server` |
+| `tsc` | TypeScript 7 and newer; JavaScript, TSX, JSX | Uses the project’s installed TypeScript |
 | `cssls` | CSS, SCSS, Less | `css-lsp` |
 
-The `ensure_installed` configuration automatically requests installation of these language servers through `mason-lspconfig.nvim`.
+The `ensure_installed` configuration requests installation of `ts_ls` and `cssls` through `mason-lspconfig.nvim`.
+
+`lua/config/typescript.lua` selects the TypeScript server automatically per project. It finds the nearest installed `node_modules/typescript/package.json` upward from the file being edited. TypeScript 7 and newer use that installation’s `node_modules/.bin/tsc --lsp --stdio`; older versions use `ts_ls`. Only the matching server attaches, and the TypeScript installation directory separates clients for packages using different versions. Deno projects are excluded using the upstream root checks.
+
+Install project dependencies before opening files. After changing a project’s TypeScript version, restart Neovim so the server is selected again. If the native executable is missing, run your package manager’s install command. Projects without a local TypeScript installation retain the legacy server’s bundled fallback. This addresses the TypeScript 7 `provides no tsserver.js` warning without downgrading project dependencies; unrelated server errors still need investigation.
+
+Run `:LspInfo` to verify the selected server. If `tsc` is unavailable as an LSP configuration, update `nvim-lspconfig` with `:Lazy update nvim-lspconfig` and restart Neovim.
 
 Installing a server manually through Mason does not update `lsp.lua`. Add new language servers to `ensure_installed` when you want them included in future installations.
 
