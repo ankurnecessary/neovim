@@ -415,7 +415,7 @@ For single-quoted strings and imports while keeping double-quoted JSX attributes
 }
 ```
 
-No config path or quote style is hardcoded in Neovim. Prettier may choose double quotes to avoid escaping apostrophes; JSON requires double quotes. Formatting runs only when requested with `Space f`.
+`Space f` passes `--single-quote` and `--jsx-single-quote` to Prettier, preferring single quotes for strings and JSX attributes even if the project's config specifies double quotes. Other project formatting settings still apply. Prettier may choose double quotes to avoid escaping apostrophes; JSON requires double quotes. Formatting runs only when requested with `Space f`.
 
 ### Formatting Markdown
 

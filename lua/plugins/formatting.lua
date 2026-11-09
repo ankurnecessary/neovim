@@ -2,6 +2,11 @@ return {
   {
     "stevearc/conform.nvim",
     opts = {
+      formatters = {
+        prettier = {
+          prepend_args = { "--single-quote", "--jsx-single-quote" },
+        },
+      },
       formatters_by_ft = {
         javascript = { "prettier" },
         javascriptreact = { "prettier" },
