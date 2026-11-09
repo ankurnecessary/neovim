@@ -8,6 +8,7 @@ Personal Neovim configuration for development with TypeScript, JavaScript, React
 - TypeScript and React IntelliSense using LSP and `blink.cmp`
 - React component snippet (`rafce`) for `.tsx` files
 - CSS, SCSS, and Less IntelliSense using `cssls`
+- Tailwind CSS class completion, hover information, and diagnostics
 - Language server management using Mason
 - Markdown rendering using `render-markdown.nvim`
 - Browser-based Markdown preview using `markdown-preview.nvim`
@@ -616,6 +617,7 @@ Language servers are declared in `lua/plugins/lsp.lua`:
 ensure_installed = {
   "ts_ls",
   "cssls",
+  "tailwindcss",
 },
 automatic_enable = { exclude = { "ts_ls", "tsc", "tsgo" } },
 ```
@@ -625,8 +627,9 @@ automatic_enable = { exclude = { "ts_ls", "tsc", "tsgo" } },
 | `ts_ls` | TypeScript 6 and older; JavaScript, TSX, JSX | `typescript-language-server` |
 | `tsc` | TypeScript 7 and newer; JavaScript, TSX, JSX | Uses the project’s installed TypeScript |
 | `cssls` | CSS, SCSS, Less | `css-lsp` |
+| `tailwindcss` | Tailwind CSS, HTML, JSX, TSX and other supported templates | `tailwindcss-language-server` |
 
-The `ensure_installed` configuration requests installation of `ts_ls` and `cssls` through `mason-lspconfig.nvim`.
+The `ensure_installed` configuration requests installation of `ts_ls`, `cssls`, and `tailwindcss` through `mason-lspconfig.nvim`.
 
 `lua/config/typescript.lua` selects the TypeScript server automatically per project. It finds the nearest installed `node_modules/typescript/package.json` upward from the file being edited. TypeScript 7 and newer use that installation’s `node_modules/.bin/tsc --lsp --stdio`; older versions use `ts_ls`. Only the matching server attaches, and the TypeScript installation directory separates clients for packages using different versions. Deno projects are excluded using the upstream root checks.
 
@@ -635,6 +638,14 @@ Install project dependencies before opening files. After changing a project’s 
 Run `:LspInfo` to verify the selected server. If `tsc` is unavailable as an LSP configuration, update `nvim-lspconfig` with `:Lazy update nvim-lspconfig` and restart Neovim.
 
 Installing a server manually through Mason does not update `lsp.lua`. Add new language servers to `ensure_installed` when you want them included in future installations.
+
+## Tailwind CSS Support
+
+Mason installs the Tailwind CSS language server automatically. Restart Neovim and allow installation to finish; if needed, run `:MasonInstall tailwindcss-language-server`. Reopen a Tailwind project and use `:LspInfo` to check that `tailwindcss` attaches.
+
+The project must have Tailwind installed and an entry point the server can detect: typically a Tailwind CSS import in a CSS file for v4, or a Tailwind configuration file for v3. Class completion uses the existing Blink completion menu; `K` shows hover information and `Space e` shows diagnostics.
+
+`css-data/tailwind.json` registers known Tailwind directives such as `@apply`, `@theme`, and `@source` with `cssls`. This removes unknown-at-rule warnings for those names while keeping CSS validation and warnings for unrecognized directives enabled. The custom data applies to CSS, SCSS, and Less buffers, including outside Tailwind projects; it recognizes directive names rather than validating their Tailwind semantics. Tailwind's language server supplies additional Tailwind checks where it attaches.
 
 ## WSL Clipboard Configuration
 
