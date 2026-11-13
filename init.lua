@@ -97,8 +97,17 @@ end, { desc = "Format current file" })
 -- END: format shortcut
 
 -- Toggle comments using Neovim's built-in commenting mappings.
-vim.keymap.set("n", "<leader>/", "gcc", { remap = true, desc = "Toggle line comment" })
-vim.keymap.set("x", "<leader>/", "gc", { remap = true, desc = "Toggle selected comments" })
+local function comment_keys(keys)
+  return function()
+    local parser = vim.treesitter.get_parser(0, nil, { error = false })
+    if parser then
+      parser:parse()
+    end
+    return keys
+  end
+end
+vim.keymap.set("n", "<leader>/", comment_keys("gcc"), { expr = true, remap = true, desc = "Toggle line comment" })
+vim.keymap.set("x", "<leader>/", comment_keys("gc"), { expr = true, remap = true, desc = "Toggle selected comments" })
 
 -- START: Saving screenshots
 vim.api.nvim_create_user_command("Screenshot", function()

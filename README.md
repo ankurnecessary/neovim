@@ -404,7 +404,7 @@ Folds follow indentation, so flat or unindented code will not produce useful fol
 
 ## Indentation and Formatting
 
-Press `Space /` in normal mode to comment or uncomment the current line. Select lines in Visual mode and press the same shortcut to toggle comments on the selection. This uses Neovim's built-in `gcc` / `gc` mappings and the filetype's `commentstring`; no additional plugin is required.
+Press `Space /` in normal mode to comment or uncomment the current line. Select lines in Visual mode and press the same shortcut to toggle comments on the selection. This uses Neovim's built-in `gcc` / `gc` mappings, enhanced by `ts-comments.nvim` to detect JSX/TSX context: JSX tags use `{/* ... */}` while JavaScript/TypeScript statements use `//`. Detection requires the `javascript` parser for JSX or the `tsx` parser for TSX. After installing the plugin with `:Lazy sync`, restart Neovim. If detection fails, check `:set filetype?` for `javascriptreact` or `typescriptreact` and ensure the matching parser is installed.
 
 `init.lua` sets `tabstop`, `shiftwidth`, and `softtabstop` to `2`, with `expandtab` enabled. New indentation uses spaces, with two spaces per level; existing tabs are not automatically converted. Filetype plugins or project settings may override these defaults.
 
