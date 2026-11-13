@@ -275,7 +275,7 @@ In normal mode, place the cursor on a symbol and press `gd` to go to its definit
 | `Space g t` | Normal, Gitsigns attached | Toggle inline blame | `lua/plugins/git.lua` |
 | `Space g d` | Normal | Open Git diffs | `lua/plugins/git.lua` |
 | `Space g h` | Normal | Show the current file's commit history | `lua/plugins/git.lua` |
-| `Tab` | Insert, completion menu | Select and accept a completion suggestion; fall back to normal Tab behavior when unavailable | `lua/plugins/completion.lua` |
+| `Tab` | Insert, HTML/JSX/TSX abbreviation or completion menu | Select and accept a completion suggestion; fall back to normal Tab behavior when unavailable | `lua/plugins/completion.lua` |
 | `Shift+Tab` | Insert, completion menu | Select the previous suggestion; fall back when unavailable | `lua/plugins/completion.lua` |
 | `Ctrl+L` | Insert, active snippet | Jump to the next snippet placeholder; fall back when unavailable | `lua/plugins/completion.lua` |
 | `Ctrl+H` | Insert, active snippet | Jump to the previous snippet placeholder; fall back when unavailable | `lua/plugins/completion.lua` |
@@ -360,6 +360,14 @@ Restart Neovim and run `:Lazy sync` to install the plugins. The Tree-sitter setu
 ```
 
 Reopen the file after installation. If tags do not close, check `:set filetype?`: `.html`, `.jsx`, and `.tsx` files should use `html`, `javascriptreact`, and `typescriptreact`, respectively. Use `:checkhealth nvim-treesitter` to investigate parser installation problems.
+
+## Emmet Tag Expansion
+
+In HTML, JSX, or TSX insert mode, type a common HTML tag abbreviation such as `p`, `div`, or `span` and press `Tab` to expand it. `p` becomes `<p></p>` with the cursor inside. Common Emmet combinations such as `div.container` and `ul>li*3` are also supported when they start with a recognized HTML tag.
+
+This uses `mattn/emmet-vim` through the Blink Tab mapping. Markup expansion takes precedence for recognized HTML tag prefixes; other text retains completion acceptance and normal Tab fallback, including `rafce`. Use `Ctrl+Y` to accept completion explicitly when a name also matches a tag. No default Emmet keybindings are installed.
+
+Restart Neovim and run `:Lazy sync` to install the dependency.
 
 ## React Component Snippets
 
