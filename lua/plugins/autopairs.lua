@@ -10,7 +10,7 @@ return {
     opts = {
       opts = {
         enable_close = true,
-        enable_rename = false,
+        enable_rename = true,
       },
     },
   },

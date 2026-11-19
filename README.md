@@ -351,7 +351,7 @@ These built-in shortcuts work in normal mode:
 
 `nvim-autopairs` inserts matching closing brackets and quotes as you type in insert mode. For example, typing `(`, `[`, or `{` inserts `()`, `[]`, or `{}`, leaving the cursor between the pair. Typing the matching closing bracket moves past the existing closer; Backspace between an empty pair removes both characters.
 
-`nvim-ts-autotag` closes HTML and JSX/TSX tags when you type the opening tag's `>`. For example, typing `<div>` adds `</div>` and leaves the cursor between the tags. Automatic tag renaming is disabled. No new shortcut is needed.
+`nvim-ts-autotag` closes HTML and JSX/TSX tags when you type the opening tag's `>`. For example, typing `<div>` adds `</div>` and leaves the cursor between the tags. Automatic tag renaming is enabled: edit the opening tag name in insert mode or by using shortcut `ciw` in normal mode, then leave insert mode to synchronize its closing tag (for example, `<div>...</div>` becomes `<section>...</section>`). No new shortcut is needed.
 
 Restart Neovim and run `:Lazy sync` to install the plugins. The Tree-sitter setup requests `html`, `javascript`, `typescript`, and `tsx` parsers in addition to the Markdown parsers. Tag closing requires the appropriate parser to finish installing. To install or retry them explicitly:
 
