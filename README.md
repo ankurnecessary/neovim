@@ -369,6 +369,18 @@ This uses `mattn/emmet-vim` through the Blink Tab mapping. Markup expansion take
 
 Restart Neovim and run `:Lazy sync` to install the dependency.
 
+## Arrow Function Snippet
+
+In JavaScript, TypeScript, JSX, or TSX insert mode, type `af`, select the arrow function snippet, and press `Tab`:
+
+```javascript
+() => {
+
+}
+```
+
+The first placeholder is the parameter list. Type parameters if needed, then press `Ctrl+L` to jump into the body; `Ctrl+H` moves back. The snippet lives in the corresponding file under `snippets/`. Restart Neovim after adding it. If the menu does not appear, press `Ctrl+Space`.
+
 ## React Component Snippets
 
 The custom `rafce` snippet creates a React arrow function component with a default export in `.tsx` files. Blink loads it from `snippets/typescriptreact.json` using Neovim's built-in snippet engine; no additional snippet plugin is required.
